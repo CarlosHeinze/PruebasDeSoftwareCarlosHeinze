@@ -2,6 +2,7 @@
 computeStatistics.py
 A tool to calculate descriptive statistics from a file.
 Compliant with PEP8.
+@author: Carlos Antonio Heinze Mortera A01700179
 """
 
 import sys

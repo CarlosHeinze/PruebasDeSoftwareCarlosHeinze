@@ -1,6 +1,6 @@
 """
 wordCount.py
-
+@author: Carlos Antonio Heinze Mortera A01700179
 Program to count the nomber and frequency of
 words in a file
 """
@@ -119,12 +119,7 @@ def write_output(word_freq, start_time, total):
 
 
 def main():
-    """
-    Main execution function for the word counter.
-
-    Handles file I/O, error management, and ensures results are
-    printed and saved line-by-line to avoid giant strings.
-    """
+    """Main execution function for the word counter."""
     start_time = time.time()
 
     if len(sys.argv) < 2:

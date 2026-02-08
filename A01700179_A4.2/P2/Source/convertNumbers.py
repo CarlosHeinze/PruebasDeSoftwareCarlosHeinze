@@ -1,6 +1,6 @@
 """
 convertNumbers.py
-
+@author: Carlos Antonio Heinze Mortera A01700179
 A tool to convert integers from a file into binary and hexadecimal
 formats.
 """
@@ -40,9 +40,6 @@ def to_binary(number):
 def to_hexadecimal(number):
     """
     Converts an integer to a 32-bit hexadecimal string.
-
-    Uses the division-remainder algorithm with a hex character map.
-    Negative numbers are represented in 32-bit Two's Complement.
 
     Args:
         number (int): The integer to convert.
