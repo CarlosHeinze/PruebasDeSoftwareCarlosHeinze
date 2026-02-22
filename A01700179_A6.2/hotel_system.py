@@ -4,6 +4,7 @@ Create Reservations in a Hotel.
 @author: Carlos Antonio Heinze Mortera
 """
 from typing import Dict, Any, Optional
+from base_class import BaseClass
 
 
 class Hotel(BaseClass):
@@ -27,7 +28,7 @@ class Hotel(BaseClass):
         if hotel_id in data:
             print(f"Error: Hotel ID '{hotel_id}' already exists.")
             return False
-            
+
         data[hotel_id] = {"name": name, "location": location, "rooms": rooms}
         self.save_data(data)
         return True
@@ -38,7 +39,7 @@ class Hotel(BaseClass):
 
         Returns:
             (bool): True if Hotel was in the JSON and could be
-                    deleted. False if it was not found. 
+                    deleted. False if it was not found.
         """
         data = self.load_data()
         if hotel_id in data:
@@ -51,11 +52,10 @@ class Hotel(BaseClass):
         """Displays the information in consol and return it"""
         data = self.load_data()
         if hotel_id in data:
-             hotel_information = data[hotel_id]
+            hotel_information = data[hotel_id]
             print(f"Consulted Hotel: {hotel_information}")
             return hotel_information
         return False
-       
 
     def modify_hotel(self, hotel_id: str, name: Optional[str] = None,
                      location: Optional[str] = None,
@@ -64,7 +64,7 @@ class Hotel(BaseClass):
         Modifies existing hotel attributes from the JSON file
 
         Returns:
-            (bool): Return True if a modification was possible and 
+            (bool): Return True if a modification was possible and
                     False if not.
         """
         data = self.load_data()
@@ -109,14 +109,14 @@ class Customer(BaseClass):
         Creates a new customer and saves it.
 
         Returns:
-            (bool): True if the customer is created and Falase if it already 
+            (bool): True if the customer is created and Falase if it already
                     exists
         """
         data = self.load_data()
         if customer_id in data:
             print(f"Error: Customer ID '{customer_id}' already exists.")
             return False
-            
+
         data[customer_id] = {"name": name, "email": email}
         self.save_data(data)
         return True
@@ -124,10 +124,10 @@ class Customer(BaseClass):
     def delete_customer(self, customer_id: str) -> None:
         """
         Deletes a customer by ID.
-        
+
         Returns:
             (bool): True if customer was in the JSON and could be
-                    deleted. False if it was not found. 
+                    deleted. False if it was not found.
         """
         data = self.load_data()
         if customer_id in data:
@@ -144,7 +144,6 @@ class Customer(BaseClass):
             print(f"Customer Requested: {customer_information}")
             return customer_information
         return False
-        
 
     def modify_customer(self, customer_id: str, name: Optional[str] = None,
                         email: Optional[str] = None) -> None:
@@ -174,7 +173,7 @@ class Reservation(BaseClass):
                            hotel_id: str) -> bool:
         """
         Creates a reservation if the hotel has available rooms.
-        
+
         Returns:
             (bool): True if reservation successful.
         """
@@ -197,10 +196,10 @@ class Reservation(BaseClass):
     def cancel_reservation(self, res_id: str) -> bool:
         """
         Cancels a reservation and frees up a hotel room.
-        
+
         Returns:
             (bool): True if reservation was in the JSON and could be
-                    deleted. False if it was not found. 
+                    deleted. False if it was not found.
         """
         data = self.load_data()
         if res_id in data:
