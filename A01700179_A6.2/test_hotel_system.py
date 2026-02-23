@@ -41,7 +41,7 @@ class TestHotelSystem(unittest.TestCase):
 
     def _remove_files(self):
         """
-        Removes the temporary JSON files after each test and 
+        Removes the temporary JSON files after each test and
         during Setup.
         """
         for filename in [self.hotel.get_filename(),
@@ -50,95 +50,142 @@ class TestHotelSystem(unittest.TestCase):
             if os.path.exists(filename):
                 os.remove(filename)
 
-    def test_hotel_operations(self):
-        """Test hotel creation, validation, display, modification, deletion."""
-        # Test display and modify on an ID that doesnt exist
-        self.assertFalse(self.hotel.display_hotel("HO_1"))
-        self.assertFalse(self.hotel.modify_hotel("HO_1", name="Fail"))
-
-        # Test creating a Hotel successfully 
-        self.assertTrue(self.hotel.create_hotel("HO_1", "HolidayInn", "QRO", 10))
+    def test_hotel_creation(self):
+        """Test creating a Hotel successfully and with a repeated ID"""
+        self.assertTrue(self.hotel.create_hotel("HO_1", "Homestay", "QRO", 10))
 
         # Test creating a Hotel with a repeated ID
-        self.assertFalse(self.hotel.create_hotel("HO_1", "HolidayInnDup", "QRO", 5))
+        self.assertFalse(self.hotel.create_hotel("HO_1", "Dup", "QRO", 5))
 
-        # Test getting data for the created hotel
+    def test_hotel_display(self):
+        """Test getting data for the created hotel"""
+        self.hotel.create_hotel("HO_1", "Homestay", "QRO", 10)
+
         hotel_data = self.hotel.display_hotel("HO_1")
         self.assertNotEqual(hotel_data, False)
-        self.assertEqual(hotel_data["name"], "HolidayInn")
+        self.assertEqual(hotel_data["name"], "Homestay")
 
-        # Test successful modification
-        self.assertTrue(self.hotel.modify_hotel("HO_1", name="FiestaInn", rooms=15))
+        # Test negative case for display an ID that doesnt exist
+        self.assertFalse(self.hotel.display_hotel("HO_98"))
+
+    def test_hotel_modification(self):
+        """Test Hotel Modification Method"""
+        self.hotel.create_hotel("HO_1", "Homestay", "QRO", 10)
+
+        self.assertTrue(
+            self.hotel.modify_hotel("HO_1", name="FiestaInn", rooms=15)
+        )
         hotel_data = self.hotel.display_hotel("HO_1")
         self.assertEqual(hotel_data["name"], "FiestaInn")
         self.assertEqual(hotel_data["rooms"], 15)
 
-        # Test successful deletion
+        # Test negative modification for a Hotel that does not exist
+        self.assertFalse(
+            self.hotel.modify_hotel("HO_99", name="One", rooms=15)
+        )
+
+    def test_hotel_deletion(self):
+        """Test Hotel deletion"""
+        self.hotel.create_hotel("HO_1", "Homestay", "QRO", 10)
+
+        # Test successful deletion of a Hotel ID that exists
         self.assertTrue(self.hotel.delete_hotel("HO_1"))
         self.assertFalse(self.hotel.display_hotel("HO_1"))
-        
+
         # Test failed deletion (ID no longer exists)
         self.assertFalse(self.hotel.delete_hotel("HO_1"))
 
-    def test_customer_operations(self):
-        """Test customer creation, validation, display, modification, deletion."""
-        # Test display and modify on a Customer ID that doesnt exist
-        self.assertFalse(self.customer.display_customer("CT_1"))
-        self.assertFalse(self.customer.modify_customer("CT_1", name="Fail"))
-
-        # Test Successful creation of a customer
+    def test_customer_creation(self):
+        """Test creation of a customer"""
         self.assertTrue(
-            self.customer.create_customer("CT_1", "Carlos", "cheinze@gmail.com")
+            self.customer.create_customer("CT_1", "Carlos", "carlos@gmail.com")
         )
 
         # Test creating a customer with a repeated ID
         self.assertFalse(
-            self.customer.create_customer("CT_1", "Daniel", "drincon@hotmail.com")
+            self.customer.create_customer("CT_1", "Daniel", "daniel@gmail.com")
         )
 
-        # Test the display of a valid customer ID
+    def test_customer_display(self):
+        """Test the display of a valid customer ID"""
+        self.customer.create_customer("CT_1", "Carlos", "carlos@gmail.com")
+
+        # Test display a customer ID that exists
         cust_data = self.customer.display_customer("CT_1")
         self.assertNotEqual(cust_data, False)
         self.assertEqual(cust_data["name"], "Carlos")
 
-        # Test successful modification
+        # Test display a Customer ID that doesnt exist
+        self.assertFalse(self.customer.display_customer("CT_56"))
+
+    def test_customer_modification(self):
+        """Test the Modification function of a customer"""
+        self.customer.create_customer("CT_1", "Carlos", "carlos@gmail.com")
+
+        # Test modify a Customer ID that exists
         self.assertTrue(self.customer.modify_customer("CT_1", name="Charlie"))
         cust_data = self.customer.display_customer("CT_1")
         self.assertEqual(cust_data["name"], "Charlie")
 
-        # Test successful deletion
+        # Test modify on a Customer ID that doesnt exist
+        self.assertFalse(self.customer.modify_customer("CT_99", name="Fail"))
+
+    def test_customer_deletion(self):
+        """Test the deletion function of customer"""
+        self.customer.create_customer("CT_1", "Carlos", "carlos@gmail.com")
+
+        # Test successful deletion of customer ID that exists
         self.assertTrue(self.customer.delete_customer("CT_1"))
         self.assertFalse(self.customer.display_customer("CT_1"))
-        
+
         # Test failed deletion (ID does not exist)
         self.assertFalse(self.customer.delete_customer("CT_1"))
 
-    def test_reservation_operations(self):
-        """Test creating, displaying, and canceling reservations."""
+    def test_reservation_creation(self):
+        """Test the create function of the Reservation class"""
 
-        # Create the customers and hotels to create the reservation
         self.hotel.create_hotel("HO_2", "Continental", "CDMX", 1)
         self.customer.create_customer("CT_2", "Jorge", "JLopez@outlook.com")
 
-        # Test display on non-existent ID
-        self.assertFalse(self.reservation.display_reservation("Res_1"))
-
         # Test creating a successful reservation
-        self.assertTrue(self.reservation.create_reservation("Res_1", "CT_2", "HO_2"))
+        self.assertTrue(
+            self.reservation.create_reservation("Res_1", "CT_2", "HO_2")
+        )
 
         # Test that the Hotel rooms are 1 less than the creation
         self.assertEqual(self.hotel.display_hotel("HO_2")["rooms"], 0)
 
         # Test creating a reservation with an existing ID
-        self.assertFalse(self.reservation.create_reservation("Res_1", "CT_2", "HO_2"))
+        self.assertFalse(
+            self.reservation.create_reservation("Res_1", "CT_2", "HO_2")
+        )
 
         # Test creating a reservation in a Hotel with 0 rooms
-        self.assertFalse(self.reservation.create_reservation("Res_2", "CT_2", "HO_2"))
+        self.assertFalse(
+            self.reservation.create_reservation("Res_2", "CT_2", "HO_2")
+        )
+
+    def test_reservation_display(self):
+        """Test the Display finctionality of the Reservation class"""
+
+        self.hotel.create_hotel("HO_2", "Continental", "CDMX", 1)
+        self.customer.create_customer("CT_2", "Jorge", "JLopez@outlook.com")
+        self.reservation.create_reservation("Res_1", "CT_2", "HO_2")
 
         # Test the display method of reservation
         res_data = self.reservation.display_reservation("Res_1")
         self.assertNotEqual(res_data, False)
         self.assertEqual(res_data["customer_id"], "CT_2")
+
+        # Test display on non-existent ID
+        self.assertFalse(self.reservation.display_reservation("Res_99"))
+
+    def test_reservation_cancelation(self):
+        """Test the cancelation function of the Reservation class"""
+
+        self.hotel.create_hotel("HO_2", "Continental", "CDMX", 1)
+        self.customer.create_customer("CT_2", "Jorge", "JLopez@outlook.com")
+        self.reservation.create_reservation("Res_1", "CT_2", "HO_2")
 
         # Cancel reservation successfully
         self.assertTrue(self.reservation.cancel_reservation("Res_1"))
